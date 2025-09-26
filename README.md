@@ -20,20 +20,52 @@ npm install
 
 ## Uso
 
-1. Inicia la aplicación:
+### Desarrollo
+1. Instala las dependencias:
+```bash
+npm install
+```
+
+2. Inicia la aplicación:
 ```bash
 npm start
 ```
 
+### Ejecutables e Instaladores
+Para crear ejecutables e instaladores:
+
+```bash
+# Crear todos los ejecutables
+npm run dist
+
+# Solo para Windows
+npm run dist:win
+
+# Solo para macOS
+npm run dist:mac
+
+# Solo para Linux
+npm run dist:linux
+```
+
+Los archivos generados estarán en la carpeta `dist/`:
+- **qrshare-electron-1.0.0-setup.exe** - Instalador para Windows
+- **qrshare-electron-1.0.0-portable.exe** - Versión portable para Windows
+- **qrshare.exe** - Ejecutable descomprimido (en carpetas win-unpacked/)
+
+### Funcionamiento
+1. Ejecuta la aplicación (desde desarrollo o instalador)
 2. Haz clic en "Seleccionar Archivo" para elegir un archivo
-
 3. Haz clic en "Compartir" junto al archivo que quieras compartir
-
 4. Se abrirá un modal con el código QR y la URL del archivo
-
 5. Escanea el código QR con otro dispositivo en la misma red local
-
 6. El archivo se descargará automáticamente
+
+### URLs Optimizadas
+Las URLs son mínimas para códigos QR más legibles:
+- Formato: `http://[IP]:[puerto]/[ID]`
+- ID: 3 caracteres (letras/números)
+- Ejemplo: `http://192.168.1.100:50001/abc`
 
 ## Estructura del Proyecto
 

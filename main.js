@@ -33,7 +33,7 @@ function startServer() {
 
   const expressApp = express();
 
-  expressApp.get('/file/:id', (req, res) => {
+  expressApp.get('/:id', (req, res) => {
     const fileId = req.params.id;
     const fileInfo = sharedFiles.get(fileId);
 
@@ -114,8 +114,35 @@ ipcMain.handle('select-file', async () => {
   return null;
 });
 
+function generateShortId() {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  for (let i = 0; i < 3; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+}
+
+function getUniqueFileId() {
+  let fileId;
+  let attempts = 0;
+  const maxAttempts = 100;
+  
+  do {
+    fileId = generateShortId();
+    attempts++;
+    if (attempts > maxAttempts) {
+      // Si no encontramos un ID único después de muchos intentos, usar timestamp
+      fileId = Date.now().toString().slice(-3);
+      break;
+    }
+  } while (sharedFiles.has(fileId));
+  
+  return fileId;
+}
+
 ipcMain.handle('share-file', async (event, fileInfo) => {
-  const fileId = Date.now().toString() + Math.random().toString(36).substr(2, 5);
+  const fileId = getUniqueFileId();
   
   sharedFiles.set(fileId, {
     path: fileInfo.path,
@@ -127,7 +154,7 @@ ipcMain.handle('share-file', async (event, fileInfo) => {
   try {
     const currentPort = await startServer();
     const ip = getLocalIP();
-    const fileUrl = `http://${ip}:${currentPort}/file/${fileId}`;
+    const fileUrl = `http://${ip}:${currentPort}/${fileId}`;
 
     return {
       id: fileId,
