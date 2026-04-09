@@ -1,0 +1,382 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+#app {
+  width: 100%;
+  max-width: 500px;
+}
+
+/* Sender Layout */
+.sender-container {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  padding: 40px;
+}
+
+.sender-container h1 {
+  color: #2563eb;
+  font-size: 2em;
+  margin-bottom: 10px;
+}
+
+.sender-container .subtitle {
+  color: #6b7280;
+  margin-bottom: 30px;
+  font-size: 0.95em;
+}
+
+/* Receiver Layout */
+.receiver-container {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  padding: 40px;
+  text-align: center;
+}
+
+.receiver-container h1 {
+  color: #2563eb;
+  font-size: 2em;
+  margin-bottom: 10px;
+}
+
+.receiver-container .subtitle {
+  color: #6b7280;
+  margin-bottom: 30px;
+}
+
+/* Buttons */
+.btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: white;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
+}
+
+.btn-secondary {
+  background: #e5e7eb;
+  color: #1f2937;
+}
+
+.btn-secondary:hover {
+  background: #d1d5db;
+}
+
+/* File input */
+#fileInput {
+  display: none;
+}
+
+/* Files table */
+.files-table {
+  width: 100%;
+  margin-top: 30px;
+  border-collapse: collapse;
+}
+
+.files-table thead {
+  background: #f3f4f6;
+}
+
+.files-table th {
+  padding: 12px;
+  text-align: left;
+  color: #374151;
+  font-weight: 600;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.files-table td {
+  padding: 12px;
+  border-bottom: 1px solid #e5e7eb;
+  color: #6b7280;
+}
+
+.file-name {
+  color: #1f2937;
+  font-weight: 500;
+}
+
+.file-size {
+  font-size: 0.9em;
+}
+
+.file-status {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.85em;
+  font-weight: 600;
+}
+
+.status-pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status-shared {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.status-transferring {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.status-sent {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.status-completed {
+  background: #dcfce7;
+  color: #166534;
+}
+
+/* Modal QR */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal.show {
+  display: flex;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 16px;
+  padding: 40px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  position: relative;
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #6b7280;
+  cursor: pointer;
+}
+
+.modal-close:hover {
+  color: #1f2937;
+}
+
+.modal h2 {
+  color: #1f2937;
+  margin-bottom: 20px;
+  font-size: 1.3em;
+}
+
+#qrContainer {
+  margin: 20px 0;
+  text-align: center;
+}
+
+.file-info-modal {
+  background: #f3f4f6;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 20px 0;
+}
+
+.file-info-modal p {
+  margin: 8px 0;
+  font-size: 0.9em;
+  color: #6b7280;
+}
+
+.file-info-modal strong {
+  color: #1f2937;
+}
+
+#transferProgress {
+  display: none;
+  margin: 20px 0;
+}
+
+#progressBar {
+  width: 100%;
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 12px 0;
+}
+
+#progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #2563eb, #667eea);
+  width: 0%;
+  transition: width 0.2s ease;
+}
+
+#progressText {
+  font-size: 0.85em;
+  color: #6b7280;
+  text-align: center;
+}
+
+/* Receiver Status */
+#receiverStatus {
+  font-size: 1em;
+  color: #374151;
+  min-height: 24px;
+  margin: 20px 0;
+}
+
+#fileInfoReceiver {
+  background: #f3f4f6;
+  border-radius: 12px;
+  padding: 20px;
+  margin: 20px 0;
+  display: none;
+  border-left: 4px solid #2563eb;
+  text-align: left;
+}
+
+.receiver-file-name {
+  font-weight: 600;
+  font-size: 1.1em;
+  color: #1f2937;
+  margin-bottom: 8px;
+}
+
+.receiver-file-detail {
+  color: #6b7280;
+  font-size: 0.9em;
+  margin: 4px 0;
+}
+
+#progressContainerReceiver {
+  display: none;
+  margin: 20px 0;
+}
+
+#downloadBtn {
+  display: none;
+  padding: 14px 32px;
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1em;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
+}
+
+#downloadBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(22, 163, 74, 0.4);
+}
+
+/* Spinner */
+.spinner {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid #e5e7eb;
+  border-top-color: #2563eb;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  margin-right: 8px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Status messages */
+.error {
+  background: #fee2e2;
+  color: #dc2626;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin: 16px 0;
+  border-left: 4px solid #dc2626;
+}
+
+.success {
+  background: #dcfce7;
+  color: #16a34a;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin: 16px 0;
+  border-left: 4px solid #16a34a;
+}
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: #6b7280;
+}
+
+.empty-state p {
+  margin: 8px 0;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .sender-container,
+  .receiver-container {
+    padding: 30px 20px;
+  }
+
+  .files-table th,
+  .files-table td {
+    padding: 8px;
+    font-size: 0.9em;
+  }
+
+  .btn {
+    padding: 10px 16px;
+    font-size: 0.95em;
+  }
+}
