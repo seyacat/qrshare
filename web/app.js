@@ -292,7 +292,10 @@ class QRShareApp {
   createOffer(fileId, receiverToken) {
     const fileInfo = this.files.get(fileId);
 
-    this.pc = new RTCPeerConnection({ iceServers: [] });
+    this.pc = new RTCPeerConnection({ iceServers: [
+      { urls: 'stun:stun.l.google.com:19302' },
+      { urls: 'stun:stun1.l.google.com:19302' }
+    ] });
     this.dc = this.pc.createDataChannel('fileTransfer', { ordered: true });
 
     this.dc.onopen = () => {
@@ -455,7 +458,10 @@ class QRShareApp {
   }
 
   createAnswer(offer, senderToken) {
-    this.pc = new RTCPeerConnection({ iceServers: [] });
+    this.pc = new RTCPeerConnection({ iceServers: [
+      { urls: 'stun:stun.l.google.com:19302' },
+      { urls: 'stun:stun1.l.google.com:19302' }
+    ] });
 
     this.pc.onicecandidate = (e) => {
       if (e.candidate) {
