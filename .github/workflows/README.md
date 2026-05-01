@@ -38,7 +38,7 @@ Si quieres desplegar manualmente:
 Para cambiar la URL del servidor WebSocket cuando esté en GitHub Pages, modifica en `web/app.js`:
 
 ```js
-this.wsUrl = 'wss://closer.click:4000'; // o tu servidor
+this.wsUrl = 'wss://proxy.closer.click'; // o tu servidor
 ```
 
 ### Monitoreo

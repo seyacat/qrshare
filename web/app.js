@@ -1,6 +1,6 @@
 class QRShareApp {
   constructor() {
-    this.wsUrl = 'wss://closer.click:4000';
+    this.wsUrl = 'wss://proxy.closer.click';
     this.ws = null;
     this.myToken = null;
     this.peerToken = null;

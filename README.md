@@ -1,8 +1,8 @@
 # QRShare - P2P File Transfer con WebRTC
 
-**Comparte archivos P2P en tu red local sin necesidad de servidor.**
+**Comparte archivos P2P entre dispositivos usando WebRTC.**
 
-🌐 **[Abre la app aquí](https://seyacat.github.io/qrshare)** ← Dale click para usar directamente en el navegador
+🌐 **[Abre la app aquí](https://seyacat.github.io/qrshare)** ← úsala directamente en el navegador
 
 ---
 
@@ -10,28 +10,24 @@
 
 Una **app web pura** (HTML + CSS + JavaScript) para compartir archivos entre dispositivos usando **WebRTC** (P2P directo).
 
-- 📱 Funciona en cualquier navegador moderno
-- 🔒 Los archivos viajan P2P, no pasan por servidor
-- 📡 Solo la señalización usa WebSocket (offsets, no datos)
-- ⚡ Transferencia rápida dentro de la red local
-- 📲 QR dinámico para compartir fácilmente
+- Funciona en cualquier navegador moderno
+- Los archivos viajan P2P, no pasan por el servidor
+- Solo la señalización (SDP/ICE) usa el proxy WebSocket
+- Transferencia rápida en red local
+- QR dinámico para emparejar fácil
 
 ---
 
 ## Cómo usar
 
-### Opción 1: Usar online (recomendado)
+### Online (recomendado)
 1. Abre [QRShare en tu navegador](https://seyacat.github.io/qrshare)
 2. Selecciona un archivo
 3. Comparte el QR o URL con otro dispositivo
-4. ¡Listo! La transferencia es P2P directo
+4. La transferencia es P2P directa
 
-### Opción 2: Ejecutar localmente
-```bash
-cd web/
-python3 server.py 8080
-```
-Luego abre `http://localhost:8080`
+### Local
+Sirve la carpeta `web/` con cualquier servidor estático (por ejemplo `npx http-server`) y abre `http://localhost:8080`.
 
 ---
 
@@ -41,7 +37,7 @@ Luego abre `http://localhost:8080`
 1. Sender abre la app → obtiene token "ABCD"
 2. Selecciona archivo → genera QR con URL ?peer=ABCD
 3. Receiver escanea QR → abre URL con parámetro
-4. Ambos intercambian SDP/ICE vía WebSocket (wss://closer.click:4000)
+4. Ambos intercambian SDP/ICE vía WebSocket (wss://proxy.closer.click)
 5. WebRTC Data Channel abre → transferencia P2P en chunks
 6. Auto-descarga al completar
 ```
@@ -50,21 +46,20 @@ Luego abre `http://localhost:8080`
 
 ## Características
 
-✅ **P2P directo** - archivos NO pasan por servidor  
-✅ **Responsive** - funciona en PC y móvil  
-✅ **QR dinámico** - URL generada en tiempo real  
-✅ **Barra de progreso** - transferencia en vivo  
-✅ **Auto-descarga** - comienza automáticamente  
-✅ **Sin límite de tamaño** - soporta archivos grandes  
-✅ **Backpressure handling** - optimizado para memoria  
+- P2P directo: archivos NO pasan por el servidor
+- Responsive: PC y móvil
+- QR dinámico generado en tiempo real
+- Barra de progreso en vivo
+- Auto-descarga al completar
+- Sin límite de tamaño
+- Backpressure handling
 
 ---
 
 ## Requisitos
 
 - Navegador moderno con soporte WebRTC (Chrome, Firefox, Safari, Edge)
-- Conexión a internet (para acceder a wss://closer.click:4000)
-- Mismo WiFi (recomendado) o cualquier red
+- Acceso a `wss://proxy.closer.click`
 
 ---
 
@@ -72,11 +67,10 @@ Luego abre `http://localhost:8080`
 
 ```
 qrshare/
-├── web/                           # ← La app web
-│   ├── index.html                 # HTML minimal
-│   ├── app.js                     # Lógica (17KB)
+├── web/                           ← La app web
+│   ├── index.html                 # HTML mínimo
+│   ├── app.js                     # Lógica (WebSocket + WebRTC + UI)
 │   ├── styles.css                 # Diseño responsive
-│   ├── server.py                  # Servidor local
 │   └── README.md                  # Docs de la app
 ├── .github/workflows/
 │   └── deploy-pages.yml           # Auto-deploy a GitHub Pages
@@ -86,51 +80,41 @@ qrshare/
 
 ---
 
-## Desarrollo local
-
-### Instalar
-```bash
-# No hay dependencias npm para la app web
-# Solo Python para el servidor local
-
-cd web/
-python3 server.py 8080
-```
-
-Abre `http://localhost:8080`
+## Desarrollo
 
 ### Cambiar servidor de señalización
-Edita `web/app.js` línea 2:
+Edita `web/app.js` línea 3:
 ```js
-this.wsUrl = 'wss://tu-servidor:puerto';
+this.wsUrl = 'wss://tu-servidor';
 ```
 
 ### Cambiar tamaño de chunk
 En `web/app.js`, método `startSendingFile()`:
 ```js
-const CHUNK_SIZE = 128 * 1024; // 128KB en lugar de 64KB
+const CHUNK_SIZE = 128 * 1024; // 128 KB en lugar de 64 KB
 ```
 
 ---
 
 ## Servidor de señalización
 
-Usa `wss://closer.click:4000` - un WebSocket proxy que:
-- Asigna tokens únicos a cada conexión
-- **Relaya SOLO metadatos** (SDP, ICE)
-- **NO transfiere datos** de archivos
-- Abre después de 20 min de inactividad
+Usa `wss://proxy.closer.click` — un WebSocket proxy que:
+
+- Asigna tokens cortos (4 caracteres) a cada conexión
+- Relaya **solo** metadatos (SDP, ICE)
+- **No** transfiere datos de archivos
+- Sin estado persistente
 
 ---
 
-## GitHub Pages (Auto-deploy)
+## GitHub Pages
 
-Cada vez que haces push a `main` en la carpeta `web/`, se deploya automáticamente a:
+Cada push a `main` que toque `web/` se publica automáticamente en:
 ```
 https://seyacat.github.io/qrshare
 ```
 
-Ver `.github/workflows/deploy-pages.yml`
+Ver `.github/workflows/deploy-pages.yml`.
 
 ---
 
@@ -138,27 +122,22 @@ Ver `.github/workflows/deploy-pages.yml`
 
 | Problema | Solución |
 |----------|----------|
-| "No aparece archivo en selector" | Recarga la página (F5) |
-| "No se conecta al WebSocket" | Verifica que `wss://closer.click:4000` esté disponible (F12 → Console) |
-| "QR no aparece" | Verifica CDN de qr-code-styling o usa fallback a URL texto |
-| "Transferencia lenta" | Normal en 4G/5G. El bottleneck es el ancho de banda del móvil |
-| "No descarga automáticamente" | Click manual en botón "Descargar Archivo" |
+| No aparece el archivo en el selector | Recarga la página (F5) |
+| No se conecta al WebSocket | Verifica que `wss://proxy.closer.click` esté disponible (F12 → Console) |
+| QR no aparece | Verifica el CDN de qr-code-styling o usa el fallback de URL en texto |
+| Transferencia lenta | Normal en 4G/5G. El cuello de botella es el ancho de banda del móvil |
+| No descarga automáticamente | Click manual en "Descargar Archivo" |
 
 ---
 
 ## Notas técnicas
 
-- **Chunking**: 64KB por defecto
-- **ICE Servers**: Vacío (solo LAN). En producción, agregar STUN/TURN
-- **Timeout**: 20 min de inactividad → reconexión necesaria
-- **Max conexiones**: Sin límite (depende del servidor proxy)
+- **Chunking**: 64 KB por defecto
+- **ICE Servers**: vacío (solo LAN). En producción, agregar STUN/TURN
+- **Max conexiones**: depende del proxy
 
 ---
 
 ## Licencia
 
 MIT
-
----
-
-**¿Preguntas?** Abre un issue o revisa `web/README.md` para más detalles técnicos.
